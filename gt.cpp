@@ -5,27 +5,41 @@
 
 #include "gt.h"
 
-//int a[2][3] = { {1,2,3}, {4,5,6} };
-
 int main(int argc, char* argv[])
 {
+	srand(time(NULL));
 	GRAPH graph(10);
 	graph.RandomGraphGenerate();
+	//graph.PrintGraph();
+	//graph.BFS();
+	for(int i = 0; i < graph.Vsize; i++)
+		graph.DFS(graph.node[i]);
 	graph.PrintGraph();
-	cout << "\n\n\n";
-	graph.BFS();
 	return 0;
 }
 
+int GRAPH::DFS(NODE* v)
+{
+	if(v->color == 2) //2=white: for non-connected graph is necessary
+	{
+		v->color--; //1=grey
+		v->discovery_time = TIME;
+		TIME++;
 
+		for(int i = 0; i < v->Nsize; i++)
+			if(v->adjacency[i]->color == 2) // it seems redundant to the top "if" but it is necessary for parent setting
+			{
+				v->adjacency[i]->parent = v;
+				DFS(v->adjacency[i]); // can be out of if
+			}
 
-
-
-
-
-
-
-
+		v->color--; //0=black
+		v->finish_time = TIME;
+		TIME++;
+	}
+	//node->PrintNode();
+	return 0;
+}
 
 int GRAPH::BFS()
 {
@@ -109,6 +123,7 @@ GRAPH::GRAPH(int vsize)
 	this->adjacency = new int* [vsize];
 	for(int i = 0; i < vsize; i++)
 		this->adjacency[i] = new int [vsize];
+	TIME = 0;
 }
 
 GRAPH::~GRAPH()
@@ -135,12 +150,22 @@ NODE::NODE(int k, int nsize)
 	this->adjacency = new NODE* [nsize];
 	this->color = 2;
 	this->parent = NULL;
+	this->discovery_time = 0;
+	this->finish_time = 0;
 }
 
 void NODE::PrintNode()
 {
 	cout << "Node[" << key << "]: Nsize = " << Nsize
-			<< ", Color = " << color << ", distance = " << distance << ", Value = " << value << "\n";
+			<< ", Color = " << color << ", distance = " << distance
+			<< ", Discovery = " << discovery_time << ", Finish = " << finish_time
+			<< ", Value = " << value;
+
+	if(parent != NULL)
+		cout << ", Parent = " << parent->key << "\n";
+	else
+		cout << ", Parent = NULL\n";
+
 	for(int i = 0; i < Nsize; i++)
 		if(adjacency[i] != NULL)
 			cout << " N[" << i << "]:" << this->adjacency[i]->key << " ";

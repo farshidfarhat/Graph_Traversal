@@ -21,6 +21,8 @@ public:
 	int Nsize; // neighbor size
 	int color; // 2 = white, 1 = grey, 0 = black
 	NODE* parent;
+	int discovery_time;
+	int finish_time;
 	NODE()
 	{
 		key = 0;//rand()%100;
@@ -30,6 +32,8 @@ public:
 		adjacency = NULL;
 		color = 2;
 		parent = NULL;
+		discovery_time = 0;
+		finish_time = 0;
 	}
 	NODE(int k, int nsize);
 	~NODE();
@@ -42,17 +46,20 @@ public:
 	int** adjacency;
 	NODE** node;
 	int Vsize; // number of vertexes
+	int TIME;
 	GRAPH()
 	{
 		Vsize = 0;
 		adjacency = NULL;
 		node = NULL;
+		TIME = 0;
 	}
 	GRAPH(int vsize);
 	~GRAPH();
 	int RandomGraphGenerate();
 	void PrintGraph();
 	int BFS();
+	int DFS(NODE* node);
 };
 
 class QUEUE
